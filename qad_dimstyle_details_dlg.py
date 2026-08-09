@@ -1,4 +1,8 @@
 # -*- coding: utf-8 -*-
+# QGIS: 4.0.0
+# Qt: 6 / PyQt6 6.11.0
+# Modificado em: 2026-08-09
+
 """
 /***************************************************************************
  QAD Quantum Aided Design plugin
@@ -7,9 +11,9 @@
  
                               -------------------
         begin                : 2015-05-19
-        copyright            : iiiii
-        email                : hhhhh
-        developers           : bbbbb aaaaa ggggg
+        copyright            : 
+        email                : 
+        developers           : 
  ***************************************************************************/
 
 /***************************************************************************
@@ -862,7 +866,7 @@ class QadPreviewDim(QgsMapCanvas):
    def __init__(self, parent, plugIn):
       QgsMapCanvas.__init__(self, parent)
       self.plugIn = plugIn
-      self.setAttribute(Qt.WA_DeleteOnClose)
+      self.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose)
 
       self.iface = self.plugIn.iface
       self.layerId2canvasLayer = {}

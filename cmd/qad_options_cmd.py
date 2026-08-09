@@ -7,9 +7,9 @@
  
                               -------------------
         begin                : 2016-02-10
-        copyright            : iiiii
-        email                : hhhhh
-        developers           : bbbbb aaaaa ggggg
+        copyright            : 
+        email                : 
+        developers           : 
  ***************************************************************************/
 
 /***************************************************************************
@@ -60,5 +60,5 @@ class QadOPTIONSCommandClass(QadCommandClass):
             
    def run(self, msgMapTool = False, msg = None):
       Form = QadOPTIONSDialog(self.plugIn)
-      Form.exec_()
+      Form.exec()
       return True

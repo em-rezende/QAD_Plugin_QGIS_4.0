@@ -1,4 +1,8 @@
 # -*- coding: utf-8 -*-
+# QGIS: 4.0.0
+# Qt: 6 / PyQt6 6.11.0
+# Modificado em: 2026-08-09
+
 """
 /***************************************************************************
  QAD Quantum Aided Design plugin ok
@@ -7,9 +11,9 @@
  
                               -------------------
         begin                : 2014-02-20
-        copyright            : iiiii
-        email                : hhhhh
-        developers           : bbbbb aaaaa ggggg
+        copyright            : 
+        email                : 
+        developers           : 
  ***************************************************************************/
 
 /***************************************************************************
@@ -3321,11 +3325,15 @@ class QadDimStyle():
    # ============================================================================
    def getExtArc(self, arc, linePosPt):
       """
-      arc     = arco da quotare
+      arc      = arco da quotare
       linePosPt = punto corrispondente a dove posizionare la quotatura
       
       Ritorna un arco di estensione per la quotatura DIMRADIUS
       """
+      # Proteção contra NoneType para evitar crash ao acessar coordenadas
+      if linePosPt is None:
+         linePosPt = arc.getCenter() if hasattr(arc, 'getCenter') else QgsPointXY(0, 0)
+
       # se il punto è all'interno dell'arco
       angle = qad_utils.getAngleBy2Pts(arc.center, linePosPt)
       if qad_utils.isAngleBetweenAngles(arc.startAngle, arc.endAngle, angle) == True:
@@ -3341,18 +3349,22 @@ class QadDimStyle():
          
          myArc.setStartAngleByPt(pt)
          dummyPt, dummyTg = myArc.getPointFromStart(-self.extLineOffsetDimLine)
-         myArc.setStartAngleByPt(dummyPt)
+         if dummyPt is not None:
+            myArc.setStartAngleByPt(dummyPt)
          dummyPt, dummyTg = arc.getPointFromStart(-self.extLineOffsetOrigPoints)
-         myArc.setEndAngleByPt(dummyPt) # cambio punto finale
+         if dummyPt is not None:
+            myArc.setEndAngleByPt(dummyPt) # cambio punto finale
       else: # dalla parte del punto finale dell'arco
          myArc.set(arc.center, arc.radius, arc.endAngle, angle)
          if myArc.length() <= self.extLineOffsetOrigPoints:
             return None
          dummyPt, dummyTg = arc.getPointFromEnd(self.extLineOffsetOrigPoints)
-         myArc.setStartAngleByPt(dummyPt) # cambio punto iniziale
+         if dummyPt is not None:
+            myArc.setStartAngleByPt(dummyPt) # cambio punto iniziale
          myArc.setEndAngleByPt(pt)
          dummyPt, dummyTg = myArc.getPointFromEnd(self.extLineOffsetDimLine)
-         myArc.setEndAngleByPt(dummyPt)
+         if dummyPt is not None:
+            myArc.setEndAngleByPt(dummyPt)
       
       return myArc
 
@@ -4643,7 +4655,7 @@ class QadDimStylesClass():
          con due parametri, il primo QgsVectorLayer e il secondo l'id della feature
       """
       # verifico se l'entità appartiene ad uno stile di quotatura
-      if isinstance(layer, QgsVectorLayer):
+      if type(layer) == QgsVectorLayer:
          entity = QadEntity()
          entity.set(layer, fid)
          dimStyle, dimId = self.getDimIdByEntity(entity)

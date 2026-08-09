@@ -1,4 +1,8 @@
 # -*- coding: utf-8 -*-
+# QGIS: 4.0.0
+# Qt: 6 / PyQt6 6.11.0
+# Modificado em: 2026-08-09
+
 """
 /***************************************************************************
  QAD Quantum Aided Design plugin
@@ -7,9 +11,9 @@
  
                               -------------------
         begin                : 2017-07-27
-        copyright            : iiiii
-        email                : hhhhh
-        developers           : bbbbb aaaaa ggggg
+        copyright            : 
+        email                : 
+        developers           : 
  ***************************************************************************/
 
 /***************************************************************************
@@ -108,13 +112,13 @@ class QadDynamicEdit(QTextEdit):
       self.font_size = 8 + QadVariables.get(QadMsg.translate("Environment variables", "TOOLTIPSIZE"))
       height = self.font_size + 15
 
-      self.setTextInteractionFlags(Qt.TextEditorInteraction)
+      self.setTextInteractionFlags(Qt.TextInteractionFlag.TextEditorInteraction)
       self.setMinimumSize(height, height)
       self.setMaximumHeight(height)
       self.setUndoRedoEnabled(False)
       self.setAcceptRichText(False)
-      self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-      self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+      self.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+      self.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
       self.error = False # indica se il valore contenuto nella edit è errato
       self.lockedPos = False # indica se la posizione della edit è bloccata
 
@@ -168,7 +172,7 @@ class QadDynamicEdit(QTextEdit):
 
       # se è in stato di errore il bordo deve essere rosso largo 2 pixel
       if self.error:
-         c = QColor(Qt.red)
+         c = QColor(Qt.GlobalColor.red)
          rgbStrBorderColor = "border-color: " + fmt.format(str(c.red()), str(c.green()), str(c.blue()), str(opacity)) + ";"
          fmtBorder = "border:2px;border-style:solid;"
       else:
@@ -285,7 +289,7 @@ class QadDynamicInputCmdLineEdit(QadDynamicEdit):
    
    def __init__(self, QadDynamicInputObj):
       QadDynamicEdit.__init__(self, QadDynamicInputObj)
-      self.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Fixed)
+      self.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed)
              
       self.historyIndex = 0
 
@@ -509,14 +513,14 @@ class QadDynamicInputCmdLineEdit(QadDynamicEdit):
          self.lockedPos = False
          self.showCmdSuggestWindow(False)
 
-      if e.key() == Qt.Key_Escape:
+      if e.key() == Qt.Key.Key_Escape:
          cmdsHistory = self.plugIn.cmdsHistory
          self.historyIndex = len(cmdsHistory)
          self.QadDynamicInputObj.abort()
          return
       
       # if Return or Space is pressed, then perform the commands
-      if e.key() == Qt.Key_Return or e.key() == Qt.Key_Space or e.key == Qt.Key_Enter:
+      if e.key() == Qt.Key.Key_Return or e.key() == Qt.Key_Space or e.key == Qt.Key_Enter:
          self.entered()
          return
       # if Up or Down is pressed
@@ -613,7 +617,7 @@ class QadDynamicInputEdit(QadDynamicEdit):
     
    def __init__(self, QadDynamicInputObj):
       QadDynamicEdit.__init__(self, QadDynamicInputObj)
-      self.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Fixed)
+      self.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed)
 
       # il default è un numero reale non nullo 
       self.inputMode = QadInputModeEnum.NOT_NULL
@@ -633,7 +637,7 @@ class QadDynamicInputEdit(QadDynamicEdit):
       height = self.height() - 4
       self.LockedIcon = QLabel(self)
       self.LockedIcon.resize(height, height)
-      self.LockedIcon.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+      self.LockedIcon.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
       self.LockedIcon.setStyleSheet("border:0px;"); # senza bordo
       pixmap = QPixmap(":/plugins/qad/icons/locked.svg").scaled(height, height)
       self.LockedIcon.setPixmap(pixmap)
@@ -746,7 +750,7 @@ class QadDynamicInputEdit(QadDynamicEdit):
          else: # valore errato
             pass
          
-      elif e.key() == Qt.Key_Return or e.key == Qt.Key_Enter:
+      elif e.key() == Qt.Key.Key_Return or e.key == Qt.Key_Enter:
          self.QadDynamicInputObj.keyPressEvent(e) # lo faccio gestire da QadDynamicInputObj
 #          if self.isLockedValue() == True:
 #             value = self.toPlainText()
@@ -770,7 +774,7 @@ class QadDynamicInputEdit(QadDynamicEdit):
            (e.text() == "@" or e.text() == "#" or e.text() == "<"):
             self.QadDynamicInputObj.keyPressEvent(e) # lo faccio gestire da QadDynamicInputObj
                   
-      elif e.key() == Qt.Key_Escape:
+      elif e.key() == Qt.Key.Key_Escape:
          self.QadDynamicInputObj.abort()
                         
       elif e.text() != "":
@@ -791,11 +795,11 @@ class QadDynamicInputEdit(QadDynamicEdit):
    # ============================================================================
    def focusInEvent(self, e):
       # cambio il colore
-      foregroundColor = QColor(Qt.black)
-      backGroundColor = QColor(Qt.white)
+      foregroundColor = QColor(Qt.GlobalColor.black)
+      backGroundColor = QColor(Qt.GlobalColor.white)
       borderColor = QColor(QadVariables.get(QadMsg.translate("Environment variables", "DYNEDITBORDERCOLOR")))
       opacity = 100 - QadVariables.get(QadMsg.translate("Environment variables", "TOOLTIPTRANSPARENCY"))
-      selectionColor = QColor(Qt.white)
+      selectionColor = QColor(Qt.GlobalColor.white)
       selectionBackGroundColor = QColor(51, 153, 255) # azzurro (R=51 G=153 B=255)
       self.setColors(foregroundColor, backGroundColor, borderColor, selectionColor, selectionBackGroundColor, opacity)
       self.selectAllText() # seleziono tutto il testo
@@ -1160,7 +1164,7 @@ class QadDynamicInput(QWidget):
       if self.currentEdit is not None:
          widget = self.edits[self.currentEdit]
          widget.setReadOnly(False)
-         #widget.setWindowFlags(widget.windowFlags() | Qt.WindowStaysOnTopHint)
+         #widget.setWindowFlags(widget.windowFlags() | Qt.WindowType.WindowStaysOnTopHint
          if widget.hasFocus(): # se ha già il fuoco coloro la casella e basta
             widget.focusInEvent(None)
          else:
@@ -2012,7 +2016,7 @@ class QadDynamicCmdInput(QadDynamicInput):
       if self.currentEdit is None:
          return
                
-      if e.key() == Qt.Key_Return or e.key == Qt.Key_Enter:
+      if e.key() == Qt.Key.Key_Return or e.key == Qt.Key_Enter:
          msg = self.resStr if self.refreshResult() == True else "" # ricalcolo il risultato e lo uso in formato stringa
          self.showEvaluateMsg(msg)
       else:
@@ -3420,7 +3424,7 @@ class QadDynamicEditInput(QadDynamicInput):
                self.edits[QadDynamicInputEditEnum.EDIT_X].showMsg(coord)
             self.show(True)
                
-      elif e.key() == Qt.Key_Return or e.key == Qt.Key_Enter:
+      elif e.key() == Qt.Key.Key_Return or e.key == Qt.Key_Enter:
          # se non c'è alcun widget con valore bloccato
          if self.anyLockedValueEdit() == False:
             msg = ""

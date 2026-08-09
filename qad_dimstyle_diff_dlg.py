@@ -1,4 +1,8 @@
 # -*- coding: utf-8 -*-
+# QGIS: 4.0.0
+# Qt: 6 / PyQt6 6.11.0
+# Modificado em: 2026-08-09
+
 """
 /***************************************************************************
  QAD Quantum Aided Design plugin
@@ -7,9 +11,9 @@
  
                               -------------------
         begin                : 2015-05-19
-        copyright            : iiiii
-        email                : hhhhh
-        developers           : bbbbb aaaaa ggggg
+        copyright            : 
+        email                : 
+        developers           : 
  ***************************************************************************/
 
 /***************************************************************************
@@ -118,8 +122,8 @@ class QadDIMSTYLE_DIFF_Dialog(QDialog, QObject, qad_dimstyle_diff_ui.Ui_DimStyle
       
       self.tableWidget.sortItems(0)
 
-      self.tableWidget.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeToContents)
-      self.tableWidget.horizontalHeader().setSectionResizeMode(1, QHeaderView.Interactive)
+      self.tableWidget.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeMode.ResizeToContents)
+      self.tableWidget.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeMode.Interactive)
            
       self.msg.setText(QadMsg.translate("DimStyle_Diff_Dialog", "All properties of dimension style: ") + dimStyle.name)
 
@@ -156,9 +160,9 @@ class QadDIMSTYLE_DIFF_Dialog(QDialog, QObject, qad_dimstyle_diff_ui.Ui_DimStyle
       
       self.tableWidget.sortItems(0)
       
-      self.tableWidget.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeToContents)
-      self.tableWidget.horizontalHeader().setSectionResizeMode(1, QHeaderView.Interactive)
-      self.tableWidget.horizontalHeader().setSectionResizeMode(2, QHeaderView.Interactive)
+      self.tableWidget.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeMode.ResizeToContents)
+      self.tableWidget.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeMode.Interactive)
+      self.tableWidget.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeMode.Interactive)
            
       self.msg.setText(QadMsg.translate("DimStyle_Diff_Dialog", "Found {0} differences: ").format(str(self.count)))
 
@@ -167,16 +171,16 @@ class QadDIMSTYLE_DIFF_Dialog(QDialog, QObject, qad_dimstyle_diff_ui.Ui_DimStyle
       self.tableWidget.insertRow(self.count)
       
       item = QTableWidgetItem(unicode(description))
-      item.setFlags(Qt.ItemIsEnabled | Qt.ItemIsSelectable)
+      item.setFlags(Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsSelectable)
       self.tableWidget.setItem(self.count, 0, item)
       
       item = QTableWidgetItem(unicode(val1))
-      item.setFlags(Qt.ItemIsEnabled | Qt.ItemIsSelectable)
+      item.setFlags(Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsSelectable)
       self.tableWidget.setItem(self.count, 1, item)
       
       if val2 is not None:
          item = QTableWidgetItem(unicode(val2))
-         item.setFlags(Qt.ItemIsEnabled | Qt.ItemIsSelectable)
+         item.setFlags(Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsSelectable)
          self.tableWidget.setItem(self.count, 2, item)
       self.count += 1
       

@@ -1,4 +1,8 @@
 # -*- coding: utf-8 -*-
+# QGIS: 4.0.0
+# Qt: 6 / PyQt6 6.11.0
+# Modificado em: 2026-08-09
+
 """
 /***************************************************************************
  QAD Quantum Aided Design plugin
@@ -7,9 +11,9 @@
  
                               -------------------
         begin                : 2013-03-08
-        copyright            : iiiii
-        email                : hhhhh
-        developers           : bbbbb aaaaa ggggg
+        copyright            : 
+        email                : 
+        developers           : 
  ***************************************************************************/
 
 /***************************************************************************
@@ -63,7 +67,7 @@ class QadLayerCacheGeoms():
       self.cacheLayer = createMemoryLayer("QadLayerCacheArea", getStrLayerGeomType(self.layer), self.layer.crs())
       
       provider = self.cacheLayer.dataProvider()
-      provider.addAttributes([QgsField("index", QMetaType.Int, "Int")])
+      provider.addAttributes([QgsField("index", QMetaType.Type.Int, "Int")])
       self.cacheLayer.updateFields()
       
       if provider.capabilities() & QgsVectorDataProvider.CreateSpatialIndex:

@@ -1,4 +1,8 @@
 # -*- coding: utf-8 -*-
+# QGIS: 4.0.0
+# Qt: 6 / PyQt6 6.11.0
+# Modificado em: 2026-08-09
+
 """
 /***************************************************************************
  QAD Quantum Aided Design plugin
@@ -7,9 +11,9 @@
  
                               -------------------
         begin                : 2013-05-22
-        copyright            : iiiii
-        email                : hhhhh
-        developers           : bbbbb aaaaa ggggg
+        copyright            : 
+        email                : 
+        developers           : 
  ***************************************************************************/
 
 /***************************************************************************
@@ -33,6 +37,22 @@ import math
 import time # profiling
 import datetime
 
+from qgis.PyQt.QtCore import Qt
+
+# Compatibilidade PyQt6 para Modificadores de Teclado
+if not hasattr(Qt, 'ShiftModifier') and hasattr(Qt, 'KeyboardModifier'):
+    Qt.ShiftModifier = Qt.KeyboardModifier.ShiftModifier
+    Qt.ControlModifier = Qt.KeyboardModifier.ControlModifier
+    Qt.AltModifier = Qt.KeyboardModifier.AltModifier
+    Qt.MetaModifier = Qt.KeyboardModifier.MetaModifier
+
+# Compatibilidade PyQt6 para PenStyle (estilos de linha)
+if not hasattr(Qt, 'DotLine') and hasattr(Qt, 'PenStyle'):
+    Qt.SolidLine = Qt.PenStyle.SolidLine
+    Qt.DashLine = Qt.PenStyle.DashLine
+    Qt.DotLine = Qt.PenStyle.DotLine
+    Qt.DashDotLine = Qt.PenStyle.DashDotLine
+    Qt.DashDotDotLine = Qt.PenStyle.DashDotDotLine
 
 from . import qad_utils
 from .qad_snapper import QadSnapper, QadSnapModeEnum, QadSnapTypeEnum, snapTypeEnum2Str
@@ -45,6 +65,7 @@ from .qad_cacheareas import QadLayerCacheGeomsDict
 from .qad_textwindow import QadInputTypeEnum
 from .qad_dynamicinput import QadDynamicEditInput, QadDynamicInputContextEnum
 from .qad_msg import QadMsg
+
 
 
 # ===============================================================================
@@ -225,7 +246,7 @@ class QadGetPoint(QgsMapTool):
       if self.__drawMode == QadGetPointDrawModeEnum.ELASTIC_LINE:
          self.refreshOrthoMode() # setto il default
          self.__RubberBand = createRubberBand(self.canvas, QgsWkbTypes.LineGeometry)
-         self.__RubberBand.setLineStyle(Qt.DotLine)
+         self.__RubberBand.setLineStyle(Qt.PenStyle.DotLine)
       elif self.__drawMode == QadGetPointDrawModeEnum.ELASTIC_RECTANGLE:
          self.rectangleCrossingSelectionColor = getColorForCrossingSelectionArea()
          self.rectangleWindowSelectionColor = getColorForWindowSelectionArea()
@@ -633,9 +654,9 @@ class QadGetPoint(QgsMapTool):
       self.__csrRubberBand = QadCursorRubberBand(self.canvas, cursorType)
       
       if cursorType == QadCursorTypeEnum.NONE:
-         self.__cursor = QCursor(Qt.ArrowCursor)
+         self.__cursor = QCursor(Qt.CursorShape.ArrowCursor)
       else:
-         self.__cursor = QCursor(Qt.BlankCursor)
+         self.__cursor = QCursor(Qt.CursorShape.BlankCursor)
       self.__cursorType = cursorType
       
 
@@ -787,7 +808,7 @@ class QadGetPoint(QgsMapTool):
          self.__csrRubberBand.moveEvent(self.tmpPoint)
 
       # tasto shift premuto durante il movimento del mouse
-      self.tmpShiftKey = True if event.modifiers() & Qt.ShiftModifier else False
+      self.tmpShiftKey = True if event.modifiers() & Qt.KeyboardModifier.ShiftModifier else False
       # tasto ctrl premuto durante il movimento del mouse
       self.tmpCtrlKey = True if event.modifiers() & Qt.ControlModifier else False
       
@@ -993,12 +1014,12 @@ class QadGetPoint(QgsMapTool):
 
       # volevo mettere questo evento nel canvasReleaseEvent
       # ma il tasto destro non genera quel tipo di evento
-      if event.button() == Qt.RightButton:
+      if event.button() == Qt.MouseButton.RightButton:
          self.startDateTimeForRightClick = datetime.datetime.now()
          self.rightButton = True
          return # esco qui per non contiuare il comando dal maptool
       
-      if event.button() == Qt.LeftButton:
+      if event.button() == Qt.MouseButton.LeftButton:
          self.rightButton = False
               
          if self.getSelectionMode() == QadGetPointSelectionModeEnum.ENTITY_SELECTION_DYNAMIC or \
@@ -1045,7 +1066,7 @@ class QadGetPoint(QgsMapTool):
    # canvasReleaseEvent
    # ============================================================================
    def canvasReleaseEvent(self, event):
-      if event.button() == Qt.RightButton:
+      if event.button() == Qt.MouseButton.RightButton:
          self.rightButton = True
          # Se é stato premuto il tasto CTRL (o META)
          if ((event.modifiers() & Qt.ControlModifier) or (event.modifiers() & Qt.MetaModifier)):
@@ -1089,7 +1110,7 @@ class QadGetPoint(QgsMapTool):
       
       # se l'obiettivo é selezionare un rettangolo
       if self.getDrawMode() == QadGetPointDrawModeEnum.ELASTIC_RECTANGLE:                 
-         if event.button() == Qt.LeftButton:
+         if event.button() == Qt.MouseButton.LeftButton:
             p1 = self.__RubberBand.getPoint(0, 0)
             # se il mouse é in una posizione diversa dal punto iniziale del rettangolo
             if p1 != self.toMapCoordinates(event.pos()):
@@ -1139,7 +1160,7 @@ class QadGetPoint(QgsMapTool):
       # ALTGR non si può usare perchè è usato per indicare le coordinate
 #       # if Key_AltGr is pressed, then perform the as return
 #       if e.key() == Qt.Key_AltGr:
-#          myEvent = QKeyEvent(QEvent.KeyPress, Qt.Key_Return, Qt.NoModifier)
+#          myEvent = QKeyEvent(QEvent.KeyPress, Qt.Key.Key_Return, Qt.NoModifier)
 #       else:
 #          myEvent = e
       

@@ -1,4 +1,8 @@
 # -*- coding: utf-8 -*-
+# QGIS: 4.0.0
+# Qt: 6 / PyQt6 6.11.0
+# Modificado em: 2026-08-09
+
 """
 /***************************************************************************
  QAD Quantum Aided Design plugin
@@ -7,9 +11,9 @@
  
                               -------------------
         begin                : 2014-11-03
-        copyright            : 2013-2016
-        email                : hhhhh
-        developers           : bbbbb aaaaa ggggg
+        copyright            : 2013-2026
+        email                : 
+        developers           : 
  ***************************************************************************/
 
  *                                                                         *
@@ -21,20 +25,62 @@
  ***************************************************************************/
 """
 
-
 # Import the PyQt and QGIS libraries
 
 from qgis.PyQt.QtCore import Qt, QObject, QTranslator, qVersion, QCoreApplication, QSettings
-from qgis.PyQt.QtGui import QIcon, QKeySequence
-from qgis.PyQt.QtWidgets import QAction, QMenu, QToolButton, QShortcut, QMessageBox, QWIDGETSIZE_MAX
+from qgis.PyQt.QtGui import QIcon, QKeySequence, QPixmap
+from qgis.PyQt.QtWidgets import QAction, QMenu, QToolButton, QShortcut, QMessageBox
 from qgis.core import QgsPointXY, QgsProject, QgsMapLayer, QgsSettings, QgsApplication
 from qgis.gui import QgsGui
-# Initialize Qt resources from file qad_rc.py
-from .qad_rc import *
-
 import os
+
+_QIcon = QIcon
+_QPixmap = QPixmap
+_QAD_PLUGIN_DIR = os.path.dirname(os.path.abspath(__file__))
+
+
+def _qad_resource_path(source):
+   if isinstance(source, str) and source.startswith(":/plugins/qad/icons/"):
+      return os.path.join(_QAD_PLUGIN_DIR, "icons", source[len(":/plugins/qad/icons/"):].replace("/", os.sep))
+   return source
+
+
+class _QadIcon(_QIcon):
+   def __init__(self, source=None, *args):
+      source = _qad_resource_path(source)
+      if source is None:
+         super().__init__(*args)
+      else:
+         super().__init__(source, *args)
+
+
+class _QadPixmap(_QPixmap):
+   def __init__(self, source=None, *args):
+      source = _qad_resource_path(source)
+      if source is None:
+         super().__init__(*args)
+      else:
+         super().__init__(source, *args)
+
+
+QIcon = _QadIcon
+QPixmap = _QadPixmap
+import qgis.PyQt.QtGui as _qgis_qtgui
+_qgis_qtgui.QIcon = _QadIcon
+_qgis_qtgui.QPixmap = _QadPixmap
+import PyQt6.QtGui as _pyqt6_qtgui
+_pyqt6_qtgui.QIcon = _QadIcon
+_pyqt6_qtgui.QPixmap = _QadPixmap
+
 import math
 
+from qgis.PyQt.QtCore import Qt
+
+# Compatibilidade PyQt6 para teclas (Qt.Key_*)
+if not hasattr(Qt, 'Key_F2') and hasattr(Qt, 'Key'):
+    for attr in dir(Qt.Key):
+        if attr.startswith('Key_'):
+            setattr(Qt, attr, getattr(Qt.Key, attr))
 
 from .qad_msg import QadMsg
 from .qad_shortcuts import QadShortcuts
@@ -109,7 +155,7 @@ class Qad(QObject):
    # modalità di raccordo in comando raccordo
    filletMode = 1 # 1=Taglia-estendi, 2=Non taglia-estendi
    # ultimo numero di lati per poligono
-   lastPolygonSideNumber = 4
+   lastPolygonSideNumber = 6
    # ultima opzione di costruzione del poligono conoscendo il centro
    # "Inscritto nel cerchio", Circoscritto intorno al cerchio", "Area"
    lastPolygonConstructionModeByCenter = QadMsg.translate("Command_POLYGON", "Inscribed in circle")
@@ -181,7 +227,7 @@ class Qad(QObject):
    # version
    # ============================================================================
    def version(self):
-      return "3.0.8" # allinea con metadata.txt alla sez [general] voce "version"
+      return "4.0.0" # allinea con metadata.txt alla sez [general] voce "version"
    
    
    def setLastPointAndSegmentAng(self, point, segmentAng = None):
@@ -634,10 +680,10 @@ class Qad(QObject):
       if isFloating == False:
          # ugly hack, but only way to set dock size correctly for Qt < 5.6
          self.TextWindow.setFixedSize(dockGeometry.size())
-         self.iface.addDockWidget(dockWidgetArea, self.TextWindow)
+         self.iface.addDockWidget(Qt.DockWidgetArea(dockWidgetArea), self.TextWindow)
          self.TextWindow.resize(dockGeometry.size())
          QgsApplication.processEvents() # required!
-         self.TextWindow.setFixedSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
+         self.TextWindow.setMaximumSize(16777215, 16777215)
       else:
          self.TextWindow.setGeometry(dockGeometry)
          self.iface.addDockWidget(dockWidgetArea, self.TextWindow)
@@ -1274,7 +1320,7 @@ class Qad(QObject):
    
    def createHelpToolButton(self):
       helpToolButton = QToolButton(self.toolBar)
-      helpToolButton.setPopupMode(QToolButton.MenuButtonPopup)
+      helpToolButton.setPopupMode(QToolButton.ToolButtonPopupMode.MenuButtonPopup)
       helpToolButton.setMenu(self.helpMenu)
       helpToolButton.setDefaultAction(self.helpMenu.actions()[0]) # prima voce di menu
       helpToolButton.triggered.connect(self.helpToolButtonTriggered)
@@ -1285,7 +1331,7 @@ class Qad(QObject):
    
    def createArcToolButton(self):
       arcToolButton = QToolButton(self.toolBar)
-      arcToolButton.setPopupMode(QToolButton.MenuButtonPopup)
+      arcToolButton.setPopupMode(QToolButton.ToolButtonPopupMode.MenuButtonPopup)
       arcToolButton.setMenu(self.arcMenu)
       arcToolButton.setDefaultAction(self.arcMenu.actions()[0]) # prima voce di menu
       arcToolButton.triggered.connect(self.arcToolButtonTriggered)
@@ -1296,7 +1342,7 @@ class Qad(QObject):
 
    def createArrayToolButton(self):
       arrayToolButton = QToolButton(self.toolBar)
-      arrayToolButton.setPopupMode(QToolButton.MenuButtonPopup)
+      arrayToolButton.setPopupMode(QToolButton.ToolButtonPopupMode.MenuButtonPopup)
       arrayToolButton.setMenu(self.arrayMenu)
       arrayToolButton.setDefaultAction(self.arrayMenu.actions()[0]) # prima voce di menu
       arrayToolButton.triggered.connect(self.arrayToolButtonTriggered)
@@ -1307,7 +1353,7 @@ class Qad(QObject):
 
    def createBreakToolButton(self):
       breakToolButton = QToolButton(self.toolBar)
-      breakToolButton.setPopupMode(QToolButton.MenuButtonPopup)
+      breakToolButton.setPopupMode(QToolButton.ToolButtonPopupMode.MenuButtonPopup)
       breakToolButton.setMenu(self.breakMenu)
       breakToolButton.setDefaultAction(self.breakMenu.actions()[0]) # prima voce di menu
       breakToolButton.triggered.connect(self.breakToolButtonTriggered)
@@ -1318,7 +1364,7 @@ class Qad(QObject):
    
    def createCircleToolButton(self):
       circleToolButton = QToolButton(self.toolBar)
-      circleToolButton.setPopupMode(QToolButton.MenuButtonPopup)
+      circleToolButton.setPopupMode(QToolButton.ToolButtonPopupMode.MenuButtonPopup)
       circleToolButton.setMenu(self.circleMenu)
       circleToolButton.setDefaultAction(self.circleMenu.actions()[0]) # prima voce di menu
       circleToolButton.triggered.connect(self.circleToolButtonTriggered)
@@ -1329,7 +1375,7 @@ class Qad(QObject):
    
    def createEllipseToolButton(self):
       ellipseToolButton = QToolButton(self.toolBar)
-      ellipseToolButton.setPopupMode(QToolButton.MenuButtonPopup)
+      ellipseToolButton.setPopupMode(QToolButton.ToolButtonPopupMode.MenuButtonPopup)
       ellipseToolButton.setMenu(self.ellipseMenu)
       ellipseToolButton.setDefaultAction(self.ellipseMenu.actions()[0]) # prima voce di menu
       ellipseToolButton.triggered.connect(self.ellipseToolButtonTriggered)
@@ -2199,7 +2245,7 @@ class Qad(QObject):
          return True
       
       # Se é stato premuto il tasto ESC
-      if e.key() == Qt.Key_Escape:
+      if e.key() == Qt.Key.Key_Escape:
          # interrompo il comando corrente
          self.abortCommand()
          self.clearCurrentObjsSelection()

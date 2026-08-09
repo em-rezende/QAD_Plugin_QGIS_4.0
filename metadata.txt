@@ -9,14 +9,17 @@
 
 [general]
 name=QAD
-email=gam17@riseup.net
-author=gam17
-qgisMinimumVersion=3.40
+email=emrezende@gmail.com
+author=em-rezende
+qgisMinimumVersion=4.0
 description=Quantum Aided Design: cad like commands in QGIS
 about=Quantum Aided Design: cad like commands in QGIS
-version=3.0.8
-tracker=https://github.com/gam17/QAD/issues
-repository=https://github.com/gam17/QAD
+version=4.0.0
+# QGIS: 4.0.0
+# Qt: 6 / PyQt6 6.11.0
+# Modificado em: 2026-08-09
+tracker=https://github.com/em-rezende/QAD/issues
+repository=https://github.com/em-rezende/QAD
 
 # end of mandatory metadata
 
@@ -27,7 +30,7 @@ category=Vector
 # tags are comma separated with spaces allowed
 tags=cad,circle,digitizing,dimensioning,ellipse,polygon,polyline,rectangle,snap,vector
 
-homepage=https://qadplugin.wordpress.com
+homepage=https://github.com/em-rezende/QAD.github.io
 icon=icons/qad.png
 # experimental flag
 experimental=False
@@ -35,6 +38,5 @@ experimental=False
 # deprecated flag (applies to the whole plugin, not just a single version
 deprecated=False
 
-qgisMaximumVersion=3.99
-
+qgisMaximumVersion=4.99
    

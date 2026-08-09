@@ -1,4 +1,8 @@
 # -*- coding: utf-8 -*-
+# QGIS: 4.0.0
+# Qt: 6 / PyQt6 6.11.0
+# Modificado em: 2026-08-09
+
 """
 /***************************************************************************
  QAD Quantum Aided Design plugin
@@ -7,9 +11,9 @@
  
                               -------------------
         begin                : 2013-12-12
-        copyright            : iiiii
-        email                : hhhhh
-        developers           : bbbbb aaaaa ggggg
+        copyright            : 
+        email                : 
+        developers           : 
  ***************************************************************************/
 
 /***************************************************************************
@@ -72,7 +76,7 @@ class QadCursorRubberBand():
          self.__crosshairRubberBandDw.setColor(csrColor)
          self.__crosshairRubberBandUp = QgsRubberBand(mapCanvas, QgsWkbTypes.LineGeometry)
          self.__crosshairRubberBandUp.setColor(csrColor)
-         screenRect = QApplication.desktop().screenGeometry(mapCanvas)
+         screenRect = mapCanvas.screen().geometry()
          self.__halfScreenSize = max(screenRect.height(), screenRect.width())
          if csrSize < 100:
             self.__halfScreenSize = self.__halfScreenSize / 2

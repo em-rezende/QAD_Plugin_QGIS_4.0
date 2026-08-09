@@ -1,4 +1,8 @@
 # -*- coding: utf-8 -*-
+# QGIS: 4.0.0
+# Qt: 6 / PyQt6 6.11.0
+# Modificado em: 2026-08-09
+
 """
 /***************************************************************************
  QAD Quantum Aided Design plugin
@@ -7,9 +11,9 @@
  
                               -------------------
         begin                : 2015-05-19
-        copyright            : iiiii
-        email                : hhhhh
-        developers           : bbbbb aaaaa ggggg
+        copyright            : 
+        email                : 
+        developers           : 
  ***************************************************************************/
 
 /***************************************************************************
@@ -88,7 +92,7 @@ class QadDIMSTYLE_NEW_Dialog(QDialog, QObject, qad_dimstyle_new_ui.Ui_DimStyle_N
       title = QadMsg.translate("DimStyle_Dialog", "New dimension style: ") + self.newDimStyle.name
       Form.setWindowTitle(QadMsg.getQADTitle() + " - " + title)
       
-      if Form.exec_() == QDialog.Accepted:
+      if Form.exec() == QDialog.DialogCode.Accepted:
          self.dimStyle = Form.dimStyle
          QDialog.accept(self)
       else:

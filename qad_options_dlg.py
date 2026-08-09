@@ -1,4 +1,8 @@
 # -*- coding: utf-8 -*-
+# QGIS: 4.0.0
+# Qt: 6 / PyQt6 6.11.0
+# Modificado em: 2026-08-09
+
 """
 /***************************************************************************
  QAD Quantum Aided Design plugin
@@ -7,9 +11,9 @@
  
                               -------------------
         begin                : 2016-10-02
-        copyright            : iiiii
-        email                : hhhhh
-        developers           : bbbbb aaaaa ggggg
+        copyright            : 
+        email                : 
+        developers           : 
  ***************************************************************************/
 
 /***************************************************************************
@@ -22,13 +26,33 @@
  ***************************************************************************/
 """
 
-
 # Import the PyQt and QGIS libraries
 from qgis.PyQt.QtWidgets import QDialog, QWidget, QDialogButtonBox
 from qgis.PyQt.QtCore import *
 from qgis.PyQt.QtGui  import *
 from qgis.core import *
 from qgis.utils import *
+
+from qgis.PyQt.QtGui import QPainter
+
+# Compatibilidade PyQt6 para QPainter RenderHints
+if not hasattr(QPainter, 'Antialiasing') and hasattr(QPainter, 'RenderHint'):
+    QPainter.Antialiasing = QPainter.RenderHint.Antialiasing
+    QPainter.SmoothPixmapTransform = QPainter.RenderHint.SmoothPixmapTransform
+    QPainter.TextAntialiasing = QPainter.RenderHint.TextAntialiasing
+
+
+from qgis.PyQt.QtWidgets import QDialogButtonBox
+
+# Compatibilidade PyQt6 para botões padrão de QDialogButtonBox
+if not hasattr(QDialogButtonBox, 'Apply') and hasattr(QDialogButtonBox, 'StandardButton'):
+    QDialogButtonBox.Apply = QDialogButtonBox.StandardButton.Apply
+    QDialogButtonBox.Ok = QDialogButtonBox.StandardButton.Ok
+    QDialogButtonBox.Cancel = QDialogButtonBox.StandardButton.Cancel
+    QDialogButtonBox.Save = QDialogButtonBox.StandardButton.Save
+    QDialogButtonBox.Close = QDialogButtonBox.StandardButton.Close
+    QDialogButtonBox.Discard = QDialogButtonBox.StandardButton.Discard
+    QDialogButtonBox.Help = QDialogButtonBox.StandardButton.Help
 
 
 from .qad_options_ui import Ui_Options_Dialog
@@ -41,6 +65,8 @@ from .qad_gripcolor_dlg import QadGripColorDialog
 from .qad_windowcolor_dlg import QadColorContextEnum, QadColorElementEnum, QadWindowColorDialog
 from .qad_dsettings_dlg import QadTOOLTIPAPPEARANCEDialog
 from .qad_rightclick_dlg import QadRightClickDialog
+
+
 
 
 # ===============================================================================
@@ -327,7 +353,7 @@ class QadOPTIONSDialog(QDialog, QObject, Ui_Options_Dialog):
    def Button_TextWindowColor_clicked(self):
       Form = QadWindowColorDialog(self.plugIn, self, QadColorContextEnum.COMMAND_LINE, QadColorElementEnum.COMMAND_HISTORY_BACKGROUND)
       
-      if Form.exec_() == QDialog.Accepted:
+      if Form.exec() == QDialog.DialogCode.Accepted:
          # copio i valori dei colori in self.tempQadVariables
          variables = Form.getSysVariableList()
          for variable in variables:
@@ -358,7 +384,7 @@ class QadOPTIONSDialog(QDialog, QObject, Ui_Options_Dialog):
    
    def button_rightclick_clicked(self):
       Form = QadRightClickDialog(self.plugIn, self)
-      if Form.exec_() == QDialog.Accepted:
+      if Form.exec() == QDialog.DialogCode.Accepted:
          # copio i valori dei colori in self.tempQadVariables
          variables = Form.getSysVariableList()
          for variable in variables:
@@ -429,7 +455,7 @@ class QadOPTIONSDialog(QDialog, QObject, Ui_Options_Dialog):
 
    def button_DraftingTooltipSettings_clicked(self):
       Form = QadTOOLTIPAPPEARANCEDialog(self.plugIn, self)
-      if Form.exec_() == QDialog.Accepted:
+      if Form.exec() == QDialog.DialogCode.Accepted:
          # copio i valori dei colori in self.tempQadVariables
          variables = Form.getSysVariableList()
          for variable in variables:
@@ -493,7 +519,7 @@ class QadOPTIONSDialog(QDialog, QObject, Ui_Options_Dialog):
    def Button_AutoSnapWindowColor_clicked(self):
       Form = QadWindowColorDialog(self.plugIn, self, QadColorContextEnum.MODEL_SPACE_2D, QadColorElementEnum.AUTOSNAP_MARKER)
       
-      if Form.exec_() == QDialog.Accepted:
+      if Form.exec() == QDialog.DialogCode.Accepted:
          # copio i valori dei colori in self.tempQadVariables
          variables = Form.getSysVariableList()
          for variable in variables:
@@ -632,7 +658,7 @@ class QadOPTIONSDialog(QDialog, QObject, Ui_Options_Dialog):
                                 self.tempQadVariables.get(QadMsg.translate("Environment variables", "GRIPHOVER")), \
                                 self.tempQadVariables.get(QadMsg.translate("Environment variables", "GRIPCONTOUR")))
       
-      if Form.exec_() == QDialog.Accepted:
+      if Form.exec() == QDialog.DialogCode.Accepted:
          self.tempQadVariables.set(QadMsg.translate("Environment variables", "GRIPCOLOR"), Form.gripColor)
          self.tempQadVariables.set(QadMsg.translate("Environment variables", "GRIPHOT"), Form.gripHot)
          self.tempQadVariables.set(QadMsg.translate("Environment variables", "GRIPHOVER"), Form.gripHover)
@@ -755,7 +781,7 @@ class QadOPTIONSDialog(QDialog, QObject, Ui_Options_Dialog):
 
 
    def ButtonBOX_Apply(self, button):
-      if self.buttonBox.standardButton(button) == QDialogButtonBox.Apply:
+      if self.buttonBox.standardButton(button) == QDialogButtonBox.StandardButton.Apply:
          self.apply()
       elif self.buttonBox.standardButton(button) == QDialogButtonBox.Cancel:
          self.close()
@@ -784,7 +810,7 @@ class QadOPTIONSDialog(QDialog, QObject, Ui_Options_Dialog):
 # QadPreviewAutoSnapMarker class.
 # ===============================================================================
 class QadPreviewAutoSnapMarker(QWidget):
-   def __init__(self, plugIn, color, parent = None, windowFlags = Qt.Widget):
+   def __init__(self, plugIn, color, parent = None, windowFlags = Qt.WindowType.Widget):
       self.plugIn = plugIn
       self.color = color
       self.size = 0
@@ -801,7 +827,7 @@ class QadPreviewAutoSnapMarker(QWidget):
       x1 = center.x() - size
       y1 = center.y() - size
       dblSize = size * 2 + 1
-      painter.setRenderHint(QPainter.Antialiasing)
+      painter.setRenderHint(QPainter.RenderHint.Antialiasing)
       painter.setPen(QPen(self.color, 2))
       #painter.setPen(QPen(self.color, 12, Qt.DashDotLine, Qt.RoundCap))
       #painter.drawLine(x1, y1, x2, y2)
@@ -812,7 +838,7 @@ class QadPreviewAutoSnapMarker(QWidget):
 # QadPreviewAperture class.
 # ===============================================================================
 class QadPreviewAperture(QWidget):
-   def __init__(self, plugIn, color, cursorColor, parent = None, windowFlags = Qt.Widget):
+   def __init__(self, plugIn, color, cursorColor, parent = None, windowFlags = Qt.WindowType.Widget):
       self.plugIn = plugIn
       self.color = color
       self.cursorColor = cursorColor
@@ -830,7 +856,7 @@ class QadPreviewAperture(QWidget):
       x1 = center.x() - size
       y1 = center.y() - size
       dblSize = size * 2 + 1
-      painter.setRenderHint(QPainter.Antialiasing)
+      painter.setRenderHint(QPainter.RenderHint.Antialiasing)
       painter.setPen(QPen(self.cursorColor, 1))
       painter.drawLine(center.x(), 0, center.x(), rect.height())
       painter.drawLine(0, center.y(), rect.width(), center.y())
@@ -842,7 +868,7 @@ class QadPreviewAperture(QWidget):
 # QadPreviewPickBox class.
 # ===============================================================================
 class QadPreviewPickBox(QWidget):
-   def __init__(self, plugIn, color, parent = None, windowFlags = Qt.Widget):
+   def __init__(self, plugIn, color, parent = None, windowFlags = Qt.WindowType.Widget):
       self.plugIn = plugIn
       self.color = color
       self.size = 0
@@ -860,7 +886,7 @@ class QadPreviewPickBox(QWidget):
       y1 = center.y() - size
       dblSize = size * 2 + 1
       
-      painter.setRenderHint(QPainter.Antialiasing)
+      painter.setRenderHint(QPainter.RenderHint.Antialiasing)
       painter.setPen(QPen(self.color, 1))
       painter.drawRect(x1, y1, dblSize, dblSize)
 
@@ -869,7 +895,7 @@ class QadPreviewPickBox(QWidget):
 # QadPreviewGripSize class.
 # ===============================================================================
 class QadPreviewGripSize(QWidget):
-   def __init__(self, plugIn, fillColor, borderColor, parent = None, windowFlags = Qt.Widget):
+   def __init__(self, plugIn, fillColor, borderColor, parent = None, windowFlags = Qt.WindowType.Widget):
       self.plugIn = plugIn
       self.fillColor = fillColor
       self.borderColor = borderColor
@@ -888,7 +914,7 @@ class QadPreviewGripSize(QWidget):
       y1 = center.y() - size
       dblSize = size * 2 + 1
       
-      painter.setRenderHint(QPainter.Antialiasing)
+      painter.setRenderHint(QPainter.RenderHint.Antialiasing)
       painter.fillRect(x1, y1, dblSize, dblSize, self.fillColor)
       painter.setPen(QPen(self.borderColor, 1))
       painter.drawRect(x1, y1, dblSize, dblSize)

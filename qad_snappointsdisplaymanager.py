@@ -1,4 +1,8 @@
 # -*- coding: utf-8 -*-
+# QGIS: 4.0.0
+# Qt: 6 / PyQt6 6.11.0
+# Modificado em: 2026-08-09
+
 """
 /***************************************************************************
  QAD Quantum Aided Design plugin
@@ -7,9 +11,9 @@
  
                               -------------------
         begin                : 2013-05-22
-        copyright            : iiiii
-        email                : hhhhh
-        developers           : bbbbb aaaaa ggggg
+        copyright            : 
+        email                : 
+        developers           : 
  ***************************************************************************/
 
 /***************************************************************************
@@ -339,7 +343,7 @@ class QadSnapPointsDisplayManager():
       """
       lineMarker = createRubberBand(self.__mapCanvas, QgsWkbTypes.LineGeometry, True)
       lineMarker.setColor(self.__color)
-      lineMarker.setLineStyle(Qt.DashLine)
+      lineMarker.setLineStyle(Qt.PenStyle.DashLine)
       lineMarker.addPoint(pt1, False)
       lineMarker.addPoint(pt2, True)      
       return lineMarker

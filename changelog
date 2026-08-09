@@ -1,3 +1,63 @@
+version 4.0.0
+* 2026-07-28 Complete rewrite of the code for QGIS 4.0 (written by Ezequiel M. Rezende) - fork of gam17 code
+
+ADDED FILES:
+lamp_on.png
+
+REMOVED FILES:
+compila_risorse.bat
+qad.qrc
+qad_dsettings.qrc
+qad_rc.py
+qad_dsettings_rc.py
+
+MODIFIED FILES IN THE ROOT:
+changelog
+compila_ui.bat
+metadata.txt
+qad.ini
+qad.py
+qad_cacheareas.py
+qad_dim.py
+qad_dimensioninput_settings_ui.py
+qad_dimstyle_details_dlg.py
+qad_dimstyle_details_ui.py
+qad_dimstyle_diff_dlg.py
+qad_dimstyle_diff_ui.py
+qad_dimstyle_dlg.py
+qad_dimstyle_new_dlg.py
+qad_dimstyle_new_ui.py
+qad_dimstyle_ui.py
+qad_dsettings_dlg.py
+qad_dsettings_ui.py
+qad_dynamicinput.py
+qad_getpoint.py
+qad_gripcolor_ui.py
+qad_maptool.py
+qad_multi_geom.py
+qad_options_dlg.py
+qad_options_ui.py
+qad_pointerinput_settings_ui.py
+qad_rightclick_ui.py
+qad_rubberband.py
+qad_shortcuts.py
+qad_snappointsdisplaymanager.py
+qad_textwindow.py
+qad_tooltip_appearance_ui.py
+qad_ui.py
+qad_ui_textwindow.py
+qad_utils.py
+qad_windowcolor_dlg.py
+qad_windowcolor_ui.py
+
+FILES HAVE ALSO BEEN UPDATED IN:
+qad_dimstyle_cmd.py
+qad_dsettings_cmd.py
+qad_options_cmd.py
+dimension.qgs
+dimension_attachments.zip
+dimension_qad.ini
+
 version 3.0.8
 ---------------------------
 * 2024-10-07 Fixed bug on m2p option (reported by Fabrice DEMIEL)

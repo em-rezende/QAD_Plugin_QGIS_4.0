@@ -1,4 +1,8 @@
 # -*- coding: utf-8 -*-
+# QGIS: 4.0.0
+# Qt: 6 / PyQt6 6.11.0
+# Modificado em: 2026-08-09
+
 """
 /***************************************************************************
  QAD Quantum Aided Design plugin
@@ -7,9 +11,9 @@
  
                               -------------------
         begin                : 2013-05-22
-        copyright            : iiiii
-        email                : hhhhh
-        developers           : bbbbb aaaaa ggggg
+        copyright            : 
+        email                : 
+        developers           : 
  ***************************************************************************/
 
 /***************************************************************************
@@ -35,7 +39,21 @@ from . import qad_dimensioninput_settings_ui
 from . import qad_pointerinput_settings_ui
 from . import qad_tooltip_appearance_ui
 
+from qgis.PyQt.QtCore import Qt, QEvent
 
+# Compatibilidade PyQt6 para QEvent (QEvent.Type.*)
+if not hasattr(QEvent, 'FocusOut') and hasattr(QEvent, 'Type'):
+    QEvent.FocusOut = QEvent.Type.FocusOut
+    QEvent.FocusIn = QEvent.Type.FocusIn
+    QEvent.MouseButtonPress = QEvent.Type.MouseButtonPress
+    QEvent.KeyPress = QEvent.Type.KeyPress
+
+# Compatibilidade PyQt6 para Qt.CheckState (Qt.Checked, Qt.Unchecked)
+if not hasattr(Qt, 'Checked') and hasattr(Qt, 'CheckState'):
+    Qt.Checked = Qt.CheckState.Checked
+    Qt.Unchecked = Qt.CheckState.Unchecked
+    Qt.PartiallyChecked = Qt.CheckState.PartiallyChecked
+    
 from .qad_variables import QadVariable, QadVariables, QadAUTOSNAPEnum, QadPOLARMODEnum, POLARADDANG_to_list
 from .qad_snapper import QadSnapTypeEnum
 from .qad_msg import QadMsg, qadShowPluginPDFHelp
@@ -311,7 +329,7 @@ class QadDSETTINGSDialog(QDialog, QObject, qad_dsettings_ui.Ui_DSettings_Dialog)
 
 
    def CheckAdditionalAngles(self):
-      if self.checkBox_AdditionaltAngles.checkState() == Qt.Checked:
+      if self.checkBox_AdditionaltAngles.checkState() == Qt.CheckState.Checked:
          self.pushButton_DelAngle.setEnabled(True)
          self.listView_AdditionalAngles.setEnabled(True)
       else:
@@ -381,17 +399,17 @@ class QadDSETTINGSDialog(QDialog, QObject, qad_dsettings_ui.Ui_DSettings_Dialog)
 
    def Button_DI_DimensionInputSettings_Pressed(self):
       Form = QadDIMINPUTDialog(self.plugIn, self)
-      Form.exec_()
+      Form.exec()
 
    
    def Button_DI_PointerInputSettings_Pressed(self):
       Form = QadPOINTERINPUTDialog(self.plugIn, self)
-      Form.exec_()
+      Form.exec()
 
 
    def Button_DI_TootipAppearance_Pressed(self):
       Form = QadTOOLTIPAPPEARANCEDialog(self.plugIn, self)
-      Form.exec_()
+      Form.exec()
 
 
    def accept_dynamic_input_tab(self):
@@ -415,7 +433,7 @@ class QadDSETTINGSDialog(QDialog, QObject, qad_dsettings_ui.Ui_DSettings_Dialog)
    # Funzioni generiche
    def eventFilter(self, obj, event):
       if event is not None:
-         if event.type() == QEvent.FocusOut:
+         if event.type() == QEvent.Type.FocusOut:
             if obj == self.lineEdit_ProgrDistance:
                return not self.lineEdit_ProgrDistance_Validation()
             elif obj == self.comboBox_increment_angle:
@@ -731,7 +749,7 @@ class QadTOOLTIPAPPEARANCEDialog(QDialog, QObject, qad_tooltip_appearance_ui.Ui_
    def Button_TooltipColors_Pressed(self):
       Form = QadWindowColorDialog(self.plugIn, self, QadColorContextEnum.MODEL_SPACE_2D, QadColorElementEnum.DI_COMMAND_DESCR)
       
-      if Form.exec_() == QDialog.Accepted:
+      if Form.exec() == QDialog.Accepted:
          # copio i valori dei colori in QadVariables
          self.ColorVariables = Form.getSysVariableList()
 
@@ -778,22 +796,22 @@ class QadTOOLTIPAPPEARANCEDialog(QDialog, QObject, qad_tooltip_appearance_ui.Ui_
 # QadPreview class.
 # ===============================================================================
 class QadPreview(QWidget):
-   def __init__(self, plugIn, parent, size, transparency, windowFlags = Qt.Widget):
+   def __init__(self, plugIn, parent, size, transparency, windowFlags = Qt.WindowType.Widget):
       self.plugIn = plugIn
       self.size = size
       self.transparency = transparency
       QWidget.__init__(self, parent, windowFlags)
       
       self.edit1 = QTextEdit(self)
-      self.edit1.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-      self.edit1.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+      self.edit1.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)   # Corrigido para vertical e com Policy
+      self.edit1.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
       self.edit1.insertPlainText("12.3456")
       self.edit1.setReadOnly(True)
       
       self.edit2 = QTextEdit(self)
-      self.edit2.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-      self.edit2.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-      self.edit2.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Fixed)      
+      self.edit2.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+      self.edit2.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+      self.edit2.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed)      
       self.edit2.insertPlainText("78.9012")
       self.edit2.setReadOnly(True)
 
@@ -858,18 +876,18 @@ class QadPreview(QWidget):
       font_size = 8 + self.size
       height = font_size + 15
 
-      selectionColor = QColor(Qt.white)
+      selectionColor = QColor(Qt.GlobalColor.white)
       selectionBackGroundColor = QColor(51, 153, 255) # azzurro (R=51 G=153 B=255)
       self.setEdit(self.edit1, foregroundColor, backGroundColor, borderColor, selectionColor, selectionBackGroundColor, opacity)
       fm = QFontMetrics(self.edit1.currentFont())
-      width1 = fm.width(self.edit1.toPlainText() + "__") + 2
+      width1 = fm.horizontalAdvance(self.edit1.toPlainText() + "__") + 2
 
       self.edit1.resize(width1, height)
       self.edit1.selectAll() # seleziono tutto il testo
 
       self.setEdit(self.edit2, foregroundColor, backGroundColor, borderColor, backGroundColor, foregroundColor, opacity)
       fm = QFontMetrics(self.edit2.currentFont())
-      width2 = fm.width(self.edit2.toPlainText() + "__") + 2
+      width2 = fm.horizontalAdvance(self.edit2.toPlainText() + "__") + 2
       self.edit2.resize(width2, height)
       
       offset = int(height / 3)

@@ -1,4 +1,8 @@
 # -*- coding: utf-8 -*-
+# QGIS: 4.0.0
+# Qt: 6 / PyQt6 6.11.0
+# Modificado em: 2026-08-09
+
 """
 /***************************************************************************
  QAD Quantum Aided Design plugin
@@ -7,9 +11,9 @@
  
                               -------------------
         begin                : 2013-05-22
-        copyright            : iiiii
-        email                : hhhhh
-        developers           : bbbbb aaaaa ggggg
+        copyright            : 
+        email                : 
+        developers           : 
  ***************************************************************************/
 
 /***************************************************************************
@@ -64,7 +68,7 @@ class QadMapTool(QgsMapTool):
       self.plugIn = plugIn
       self.iface = self.plugIn.iface
       self.canvas = self.plugIn.iface.mapCanvas()      
-      self.cursor = QCursor(Qt.BlankCursor)
+      self.cursor = QCursor(Qt.CursorShape.BlankCursor)
       self.__csrRubberBand = QadCursorRubberBand(self.canvas, QadCursorTypeEnum.BOX | QadCursorTypeEnum.CROSS)
       self.entitySet = QadEntitySet()
       self.entitySetGripPoints = QadEntitySetGripPoints(plugIn)
@@ -174,9 +178,9 @@ class QadMapTool(QgsMapTool):
    # canvasPressEvent
    # ============================================================================
    def canvasPressEvent(self, event):
-      if event.button() == Qt.RightButton:
+      if event.button() == Qt.MouseButton.RightButton:
          self.startDateTimeForRightClick = datetime.datetime.now()
-      elif event.button() == Qt.LeftButton:
+      elif event.button() == Qt.MouseButton.LeftButton:
          # verifico se tasto shift premuto
          shiftKey = True if event.modifiers() & Qt.ShiftModifier else False
          # posizione corrente del mouse
@@ -271,7 +275,7 @@ class QadMapTool(QgsMapTool):
    # canvasReleaseEvent
    # ============================================================================
    def canvasReleaseEvent(self, event):
-      if event.button() == Qt.RightButton:
+      if event.button() == Qt.MouseButton.RightButton:
          shortCutMenu = QadVariables.get(QadMsg.translate("Environment variables", "SHORTCUTMENU"))
          if shortCutMenu == 0:
             # equivale a premere INVIO
@@ -337,7 +341,7 @@ class QadMapTool(QgsMapTool):
    # ============================================================================
    def wheelEvent(self, event):
       QgsMapTool.wheelEvent(self, event)
-      self.__csrRubberBand.moveEvent(self.toMapCoordinates(event.pos()))
+      self.__csrRubberBand.moveEvent(self.toMapCoordinates(event.position().toPoint()))
 
 
    # ============================================================================

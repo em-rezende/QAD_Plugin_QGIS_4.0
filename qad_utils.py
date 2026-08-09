@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+# QGIS: 4.0.0
+# Qt: 6 / PyQt6 6.11.0
+# Modificado em: 2026-08-09
 """
 /***************************************************************************
  QAD Quantum Aided Design plugin
@@ -7,9 +10,9 @@
  
                               -------------------
         begin                : 2013-05-22
-        copyright            : iiiii
-        email                : hhhhh
-        developers           : bbbbb aaaaa ggggg
+        copyright            : 
+        email                : 
+        developers           : 
  ***************************************************************************/
 
 /***************************************************************************
@@ -28,7 +31,7 @@ from qgis.PyQt.QtWidgets import QToolTip, QMessageBox, QApplication
 from qgis.core import *
 import qgis.utils
  
-              
+               
 import os
 import math
 import sys
@@ -36,6 +39,19 @@ from gettext import find
 import configparser
 import time
 import uuid, re
+
+from qgis.PyQt.QtGui import QPalette
+
+# Compatibilidade PyQt6 para QPalette Enums
+if not hasattr(QPalette, 'Inactive') and hasattr(QPalette, 'ColorGroup'):
+    QPalette.Inactive = QPalette.ColorGroup.Inactive
+    QPalette.Active = QPalette.ColorGroup.Active
+    QPalette.Disabled = QPalette.ColorGroup.Disabled
+
+if not hasattr(QPalette, 'ToolTipText') and hasattr(QPalette, 'ColorRole'):
+    QPalette.ToolTipText = QPalette.ColorRole.ToolTipText
+    QPalette.ToolTipBase = QPalette.ColorRole.ToolTipBase
+
 
 from .qad_variables import QadVariables
 from .qad_msg import QadMsg
@@ -155,8 +171,8 @@ def setMapCanvasToolTip(msg):
       QToolTip.setFont(toolTipFont)
 
    toolTipPalette = QToolTip.palette()
-   if toolTipPalette.color(QPalette.Inactive, QPalette.ToolTipText) != fColor or \
-      toolTipPalette.color(QPalette.Inactive, QPalette.ToolTipBase) != bColor:
+   if toolTipPalette.color(QPalette.ColorGroup.Inactive, QPalette.ColorRole.ToolTipText) != fColor or \
+      toolTipPalette.color(QPalette.ColorGroup.Inactive, QPalette.ColorRole.ToolTipBase) != bColor:
       toolTipPalette.setColor(QPalette.Inactive, QPalette.ToolTipText, fColor)
       toolTipPalette.setColor(QPalette.Inactive, QPalette.ToolTipBase, bColor)
       QToolTip.setPalette(toolTipPalette)
@@ -243,17 +259,28 @@ def floatLineEditWidgetValidation(widget, var, msg):
 # isNumericField
 # ===============================================================================
 def isNumericField(field):
-   """
-   La funzione verifica che il campo di tipo QgsField sia numerico
-   """
    fldType = field.type()
-   if fldType == QMetaType.Double or fldType == QMetaType.LongLong or fldType == QMetaType.Int or \
-      fldType == QMetaType.ULongLong or fldType == QMetaType.UInt:
+   
+   # Verifica se o tipo do campo é numérico de forma segura para PyQt5 e PyQt6
+   numeric_types = [
+       getattr(QMetaType, 'Double', None),
+       getattr(QMetaType, 'LongLong', None),
+       getattr(QMetaType, 'Int', None),
+       getattr(QMetaType, 'UInt', None),
+       getattr(QMetaType, 'ULongLong', None),
+       getattr(QMetaType, 'Float', None),
+       getattr(getattr(QMetaType, 'Type', None), 'Double', None),
+       getattr(getattr(QMetaType, 'Type', None), 'LongLong', None),
+       getattr(getattr(QMetaType, 'Type', None), 'Int', None),
+       getattr(getattr(QMetaType, 'Type', None), 'UInt', None),
+       getattr(getattr(QMetaType, 'Type', None), 'ULongLong', None),
+       getattr(getattr(QMetaType, 'Type', None), 'Float', None),
+   ]
+   
+   if fldType in [t for t in numeric_types if t is not None]:
       return True
-   else:
-      return False
-
-
+      
+   return False
 # ===============================================================================
 # checkUniqueNewName
 # ===============================================================================

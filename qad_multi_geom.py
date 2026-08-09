@@ -1,4 +1,8 @@
 # -*- coding: utf-8 -*-
+# QGIS: 4.0.0
+# Qt: 6 / PyQt6 6.11.0
+# Modificado em: 2026-08-09
+
 """
 /***************************************************************************
  QAD Quantum Aided Design plugin
@@ -7,9 +11,9 @@
  
                              -------------------
         begin                : 2019-03-15
-        copyright            : iiiii
-        email                : hhhhh
-        developers           : bbbbb aaaaa ggggg
+        copyright            : 
+        email                : 
+        developers           : 
  ***************************************************************************/
 
 /***************************************************************************
@@ -28,6 +32,13 @@ from qgis.core import *
 from qgis.gui import *
 import qgis.utils
 
+from qgis.PyQt.QtCore import QMetaType
+
+# Compatibilidade Qt5 / Qt6 para QMetaType
+if not hasattr(QMetaType, 'Int') and hasattr(QMetaType, 'Type'):
+    QMetaType.Int = QMetaType.Type.Int
+    QMetaType.Double = QMetaType.Type.Double
+    QMetaType.QString = QMetaType.Type.QString
 
 from .qad_point import *
 from .qad_line import QadLine
@@ -1220,7 +1231,7 @@ class QadGeomBoundingBoxCache():
       self.cacheLayer = createMemoryLayer("QadLayerCacheArea", "Polygon", qgis.utils.iface.mapCanvas().mapSettings().destinationCrs())
       
       provider = self.cacheLayer.dataProvider()
-      provider.addAttributes([QgsField("geom_at", QMetaType.Int, "Int")]) # codice della geometria
+      provider.addAttributes([QgsField("geom_at", QMetaType.Type.Int, "Int")]) # codice della geometria
       provider.addAttributes([QgsField("sub_geom_at", QMetaType.Int, "Int")]) # codice della sotto geometria
       provider.addAttributes([QgsField("part_at", QMetaType.Int, "Int")]) # codice della parte
       self.cacheLayer.updateFields()

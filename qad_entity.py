@@ -78,7 +78,7 @@ class QadEntity():
    # ===============================================================================
    def set(self, layer_or_entity, featureId = None):
       self.clear()
-      if isinstance(layer_or_entity, QgsVectorLayer):
+      if type(layer_or_entity) == QgsVectorLayer:
          self.layer = layer_or_entity # il layer non si può copiare
          self.featureId = featureId # copio l'identificativo di feature
       else: # layer è una entità
@@ -488,7 +488,7 @@ class QadLayerEntitySet():
       return self.layer.crs()
 
    def set(self, layer, features = None):
-      if isinstance(layer, QgsVectorLayer):
+      if type(layer) == QgsVectorLayer:
          self.layer = layer # il layer non si può copiare
          self.featureIds = []       
          if features is not None:
@@ -802,7 +802,7 @@ class QadEntitySet():
    def findLayerEntitySet(self, layer):
       if layer is None:
          return None
-      if isinstance(layer, QgsVectorLayer): # layer
+      if type(layer) == QgsVectorLayer: # layer
          return self.findLayerEntitySet(layer.id())     
       elif type(layer) == unicode: # id del layer
          for layerEntitySet in self.layerEntitySetList:

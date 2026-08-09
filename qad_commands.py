@@ -14,12 +14,12 @@
  ***************************************************************************/
 
 /***************************************************************************
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   *
- *                                                                         *
+ * *
+ * This program is free software; you can redistribute it and/or modify  *
+ * it under the terms of the GNU General Public License as published by  *
+ * the Free Software Foundation; either version 2 of the License, or     *
+ * (at your option) any later version.                                   *
+ * *
  ***************************************************************************/
 """
 
@@ -236,25 +236,22 @@ class QadCommandsClass():
       return cmdNames
          
    
-   # ============================================================================
+   #============================================================================
    # run
-   # ============================================================================
+   #============================================================================
    def run(self, command, param = None):
       try:
          # se c'é un comando attivo
          if self.actualCommand is not None:
             return
-
+   
          if command != QadMsg.translate("Command_list", "SUPPORTERS"):
-            if incrementDailyCmdCounter() > self.plugIn.maxDailyCmdCounter:
-               if QMessageBox.question(None, "QAD", QadMsg.translate("QAD", "QAD lets you run 200 commands per day free of popups. Donations help us to fund software development, documentation, translation and bug-fixing efforts. Do you want to donate ?"), \
+            if incrementDailyCmdCounter() > self.plugIn.maxDailyCmdCounter: 
+               if QMessageBox.critical(None, "QAD", QadMsg.translate("QAD", "You have run out of daily commands available for this version of QAD, your reasonable donation will allow us to adapt the product to your needs. Do you want to donate ?"), \
                                        QMessageBox.Yes, QMessageBox.No) == QMessageBox.Yes:
                   command = "_SUPPORTERS";
-#                if QMessageBox.critical(None, "QAD", QadMsg.translate("QAD", "You have run out of daily commands available for this version of QAD, your reasonable donation will allow us to adapt the product to your needs. Do you want to donate ?"), \
-#                                        QMessageBox.Yes, QMessageBox.No) == QMessageBox.Yes:
-#                   command = "_SUPPORTERS";
-#                else:
-#                   return
+               else:
+                  return
                
          # eccezione per comando virtuale "QadVirtualSelCommandClass" che in realtà non è un comando
          # ma è usato per selezionare oggetti quando nessun comando è attivo
@@ -303,9 +300,9 @@ class QadCommandsClass():
          displayError(e)
           
          
-   # ============================================================================
+   #============================================================================
    # runMacro
-   # ============================================================================
+   #============================================================================
    def runMacro(self, args):
       try:
          # se non c'é alcun comando attivo
@@ -313,15 +310,12 @@ class QadCommandsClass():
             return
 
          if args[0] != QadMsg.translate("Command_list", "SUPPORTERS"):
-            if incrementDailyCmdCounter() > self.plugIn.maxDailyCmdCounter:
-               if QMessageBox.question(None, "QAD", QadMsg.translate("QAD", "QAD lets you run 200 commands per day free of popups. Donations help us to fund software development, documentation, translation and bug-fixing efforts. Do you want to donate ?"), \
+            if incrementDailyCmdCounter() > self.plugIn.maxDailyCmdCounter: 
+               if QMessageBox.critical(None, "QAD", QadMsg.translate("QAD", "You have run out of daily commands available for this version of QAD, your reasonable donation will allow us to adapt the product to your needs. Do you want to donate ?"), \
                                        QMessageBox.Yes, QMessageBox.No) == QMessageBox.Yes:
-                  args[0] = "_SUPPORTERS";               
-#                if QMessageBox.critical(None, "QAD", QadMsg.translate("QAD", "You have run out of daily commands available for this version of QAD, your reasonable donation will allow us to adapt the product to your needs. Do you want to donate ?"), \
-#                                        QMessageBox.Yes, QMessageBox.No) == QMessageBox.Yes:
-#                   args[0] = "_SUPPORTERS";
-#                else:
-#                   return
+                  args[0] = "_SUPPORTERS";
+               else:
+                  return
          
          self.actualCommand = self.getCommandObj("MACRO_RUNNER")
          if self.actualCommand is None:
@@ -596,7 +590,7 @@ class QadMacroRunnerCommandClass(QadCommandClass):
       # primo elemento della lista = nome comando
       # gli altri elementi sono gli argomenti del comando None = input dell'utente
       cmdName = CmdAndArglist[0]
-      self.args = CmdAndArglist[1:] # copio la lista saltando il primo elemento
+      self.args = CmdAndArglist[1:] # copio la lista saltando il primeiro elemento
       
       self.command = self.plugIn.getCommandObj(cmdName)
 
@@ -632,7 +626,7 @@ class QadMacroRunnerCommandClass(QadCommandClass):
 
 class QadUsedCmdNamesClass():
    def __init__(self):
-      self.__nUsedCmdNames = [] # lista interna di item composti da (nome comando o alias, n. di volte che è stato usato)
+      self.__nUsedCmdNames = [] # lista interna de item composti da (nome comando o alias, n. di volte che è stato usato)
 
    def __del__(self):
       del self.__nUsedCmdNames[:]
@@ -720,4 +714,5 @@ def getMaxDailyCmdCounter():
    except:
       pass
       
-   return 200
+   return 999999
+   
