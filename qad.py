@@ -104,6 +104,8 @@ class Qad(QObject):
 
    # UI
    toolBar = None
+   drawToolBar = None
+   editToolBar = None
    dimToolBar = None
    menu = None
    translator = None
@@ -611,61 +613,66 @@ class Qad(QObject):
       self.helpToolButton = self.createHelpToolButton()
       self.toolBar.addWidget(self.helpToolButton)      
 
-      # aggiunge le toolbar per i comandi 
+      # aggiunge le toolbar per i comandi
       self.toolBar.addAction(self.setCurrLayerByGraph_action)
       self.toolBar.addAction(self.setCurrUpdateableLayerByGraph_action)
       self.toolBar.addAction(self.u_action)
       self.toolBar.addAction(self.redo_action)
-      self.toolBar.addAction(self.line_action)
-      self.toolBar.addAction(self.pline_action)
+      self.toolBar.addAction(self.dsettings_action)
+      self.toolBar.addAction(self.options_action)
+
+      self.drawToolBar = self.iface.addToolBar(QadMsg.getQADTitle() + " - " + QadMsg.translate("QAD", "Draw"))
+      self.drawToolBar.setObjectName(QadMsg.getQADTitle() + " - " + QadMsg.translate("QAD", "Draw"))
       # arco
       self.arcToolButton = self.createArcToolButton()
-      self.toolBar.addWidget(self.arcToolButton)
+      self.drawToolBar.addAction(self.line_action)
+      self.drawToolBar.addAction(self.pline_action)
+      self.drawToolBar.addWidget(self.arcToolButton)
       # cerchio
       self.circleToolButton = self.createCircleToolButton()
-      self.toolBar.addWidget(self.circleToolButton)
+      self.drawToolBar.addWidget(self.circleToolButton)
       # ellisse
       self.ellipseToolButton = self.createEllipseToolButton() # da vedere
-      self.toolBar.addWidget(self.ellipseToolButton)
+      self.drawToolBar.addWidget(self.ellipseToolButton)
 
-      self.toolBar.addAction(self.rectangle_action)
-      self.toolBar.addAction(self.polygon_action)
-      self.toolBar.addAction(self.mpolygon_action)
-      self.toolBar.addAction(self.mbuffer_action)
-      self.toolBar.addAction(self.insert_action)
-      self.toolBar.addAction(self.text_action)
-            
-      self.toolBar.addAction(self.erase_action)
-      self.toolBar.addAction(self.rotate_action)
-      self.toolBar.addAction(self.move_action)
-      self.toolBar.addAction(self.scale_action)
-      self.toolBar.addAction(self.copy_action)
+      self.drawToolBar.addAction(self.rectangle_action)
+      self.drawToolBar.addAction(self.polygon_action)
+      self.drawToolBar.addAction(self.mpolygon_action)
+      self.drawToolBar.addAction(self.mbuffer_action)
+      self.drawToolBar.addAction(self.insert_action)
+      self.drawToolBar.addAction(self.text_action)
+
+      self.editToolBar = self.iface.addToolBar(QadMsg.getQADTitle() + " - " + QadMsg.translate("QAD", "Edit"))
+      self.editToolBar.setObjectName(QadMsg.getQADTitle() + " - " + QadMsg.translate("QAD", "Edit"))
+      self.editToolBar.addAction(self.erase_action)
+      self.editToolBar.addAction(self.rotate_action)
+      self.editToolBar.addAction(self.move_action)
+      self.editToolBar.addAction(self.scale_action)
+      self.editToolBar.addAction(self.copy_action)
       
       # array
       self.arrayToolButton = self.createArrayToolButton()
-      self.toolBar.addWidget(self.arrayToolButton)
+      self.editToolBar.addWidget(self.arrayToolButton)
       
-      self.toolBar.addAction(self.offset_action)
-      self.toolBar.addAction(self.extend_action)
-      self.toolBar.addAction(self.trim_action)
-      self.toolBar.addAction(self.mirror_action)
-      self.toolBar.addAction(self.stretch_action)
-      self.toolBar.addAction(self.lengthen_action)
-      self.toolBar.addAction(self.divide_action)
-      self.toolBar.addAction(self.measure_action)
+      self.editToolBar.addAction(self.offset_action)
+      self.editToolBar.addAction(self.extend_action)
+      self.editToolBar.addAction(self.trim_action)
+      self.editToolBar.addAction(self.mirror_action)
+      self.editToolBar.addAction(self.stretch_action)
+      self.editToolBar.addAction(self.lengthen_action)
+      self.editToolBar.addAction(self.divide_action)
+      self.editToolBar.addAction(self.measure_action)
       
       # break
       self.breakToolButton = self.createBreakToolButton()
-      self.toolBar.addWidget(self.breakToolButton)
+      self.editToolBar.addWidget(self.breakToolButton)
       
-      self.toolBar.addAction(self.pedit_action)
-      self.toolBar.addAction(self.mapmpedit_action)
-      self.toolBar.addAction(self.fillet_action)
-      self.toolBar.addAction(self.join_action)
-      self.toolBar.addAction(self.disjoin_action)
-      self.toolBar.addAction(self.id_action)
-      self.toolBar.addAction(self.dsettings_action)
-      self.toolBar.addAction(self.options_action)
+      self.editToolBar.addAction(self.pedit_action)
+      self.editToolBar.addAction(self.mapmpedit_action)
+      self.editToolBar.addAction(self.fillet_action)
+      self.editToolBar.addAction(self.join_action)
+      self.editToolBar.addAction(self.disjoin_action)
+      self.editToolBar.addAction(self.id_action)
       self.enableUndoRedoButtons()
 
       # aggiunge la toolbar per la quotatura 
@@ -724,6 +731,10 @@ class Qad(QObject):
       # remove toolbars and menubars
       if self.toolBar is not None:
          del self.toolBar
+      if self.drawToolBar is not None:
+         del self.drawToolBar
+      if self.editToolBar is not None:
+         del self.editToolBar
       if self.dimToolBar is not None:
          del self.dimToolBar
       if self.menu is not None:
