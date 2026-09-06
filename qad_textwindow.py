@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # QGIS: 4.0.0
 # Qt: 6 / PyQt6 6.11.0
-# Modificado em: 2026-08-09
+# Modificado em: 2026-09-06
 
 """
 /***************************************************************************
@@ -107,8 +107,7 @@ class QadCmdOptionPos():
 # QadTextWindow
 # ===============================================================================
 class QadTextWindow(QDockWidget, Ui_QadTextWindow):
-   """This class 
-   """
+   """This class"""
    
    def __init__(self, plugin):
       """The constructor."""
@@ -127,15 +126,14 @@ class QadTextWindow(QDockWidget, Ui_QadTextWindow):
 
       self.setAllowedAreas(Qt.DockWidgetArea.TopDockWidgetArea | Qt.DockWidgetArea.BottomDockWidgetArea)
       
-      # Libera totalmente os limites de tamanho do QDockWidget e permite encolhimento
+      # MODIFICAÇÃO: Remove restrições de tamanho mínimo
       self.setMinimumSize(0, 0)
-      self.setMaximumSize(QtCore.QSize(524287, 524287))
-      self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
-
-      # Remove restrições de tamanho mínimo do widget interno
+      self.setMaximumSize(QtCore.QSize(16777215, 16777215))
+      
+      # MODIFICAÇÃO: Configura o widget interno sem restrições
       if hasattr(self, 'widget') and self.widget():
          self.widget().setMinimumSize(0, 0)
-         self.widget().setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Ignored)
+         self.widget().setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
       
       self.topLevelChanged['bool'].connect(self.onTopLevelChanged)
 
@@ -160,19 +158,23 @@ class QadTextWindow(QDockWidget, Ui_QadTextWindow):
       self.setFeatures(dock_features)
 
    def minimumSizeHint(self):
-      """Força o tamanho mínimo para zero, permitindo reduzir o dock acoplado livremente."""
+      """Força o tamanho mínimo para zero, permitindo redução total."""
       return QtCore.QSize(0, 0)
 
    def onTopLevelChanged(self, floating):
       """Ajusta o comportamento de tamanho dinamicamente ao acoplar ou desacoplar."""
       if floating:
          self.setMinimumSize(0, 0)
-         self.setMaximumSize(QtCore.QSize(524287, 524287))
+         self.setMaximumSize(QtCore.QSize(16777215, 16777215))
          self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
       else:
          self.setMinimumSize(0, 0)
+         self.setMaximumSize(QtCore.QSize(16777215, 16777215))
          if hasattr(self, 'widget') and self.widget():
             self.widget().setMinimumSize(0, 0)
+            self.widget().setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+      
+      self.resizeEdits()
 
    def __del__(self):
       """The destructor."""
@@ -181,21 +183,22 @@ class QadTextWindow(QDockWidget, Ui_QadTextWindow):
                   
       QDockWidget.__del__(self)
 
-
    def initGui(self):
       self.chronologyEdit = QadChronologyEdit(self)
       self.chronologyEdit.setObjectName("QadChronologyEdit")
-      # Permite que o histórico reduza sua altura livremente até zero[cite: 3]
+      # Remove restrições de tamanho mínimo
       self.chronologyEdit.setMinimumSize(0, 0)
-      self.chronologyEdit.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Ignored)
-     
+      self.chronologyEdit.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+      
       self.edit = QadEdit(self, self.chronologyEdit)
       self.edit.setObjectName("QadTextEdit")
-
-      # Mantém o tamanho mínimo desejado mas permite ignorar restrições rígidas do container[cite: 3]
-      self.edit.setMinimumSize(10, 5)
-      self.edit.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Ignored)
-
+      
+      # Remove restrições de tamanho mínimo
+      self.edit.setMinimumSize(0, 0)
+      # MODIFICAÇÃO: Fixa a altura da linha de comando em UMA LINHA
+      self.edit.setFixedHeight(self.edit.getOptimalHeight())
+      self.edit.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+      
       self.edit.displayPrompt(QadMsg.translate("QAD", "Command: "))
       
       # Creo la finestra per il suggerimento dei comandi
@@ -215,13 +218,26 @@ class QadTextWindow(QDockWidget, Ui_QadTextWindow):
       for varName in QadVariables.getVarNames():
          var = QadVariables.getVariable(varName)
          infoVars.append([varName, "", icon, var.descr])
-
+  
       self.cmdSuggestWindow = QadCmdSuggestWindow(self, self.edit, infoCmds, infoVars)
       self.cmdSuggestWindow.initGui()
       self.cmdSuggestWindow.show(False)
-
+  
       self.refreshColors()
-
+      
+      # MODIFICAÇÃO IMPORTANTE: Força a atualização do tamanho mínimo após a inicialização
+      # Isso resolve o problema de largura mínima que só desaparece após destacar/encaixar
+      self.setMinimumSize(0, 0)
+      if hasattr(self, 'widget') and self.widget():
+          self.widget().setMinimumSize(0, 0)
+          self.widget().setMaximumSize(QtCore.QSize(16777215, 16777215))
+          self.widget().setMinimumWidth(0)
+          self.widget().setMaximumWidth(16777215)
+      
+      # Força a atualização do layout
+      QApplication.processEvents()
+      self.resizeEdits()
+      self.updateGeometry()
 
    # ============================================================================
    # writeDockWidgetSettings
@@ -259,9 +275,8 @@ class QadTextWindow(QDockWidget, Ui_QadTextWindow):
             dockWidgetArea = Qt.DockWidgetArea.BottomDockWidgetArea
       else:
          dockWidgetArea = Qt.DockWidgetArea.BottomDockWidgetArea
-              
+               
       return isFloating, QRect(x, y, width, height), dockWidgetArea
-
 
    # ============================================================================
    # refreshColors
@@ -298,7 +313,7 @@ class QadTextWindow(QDockWidget, Ui_QadTextWindow):
       return self.parentWidget().dockWidgetArea(self)
                   
    def setFocus(self):
-        # Correção robusta para evitar o AttributeError caso 'edit' não exista diretamente[cite: 3]
+        # Correção robusta para evitar o AttributeError caso 'edit' não exista diretamente
         if hasattr(self, 'edit') and self.edit is not None:
             self.edit.setFocus()
         elif hasattr(self, 'lineEdit') and self.lineEdit is not None:
@@ -312,19 +327,6 @@ class QadTextWindow(QDockWidget, Ui_QadTextWindow):
       else:
          super().keyPressEvent(e)
 
-   def onTopLevelChanged(self, floating):
-      """Ajusta o comportamento de tamanho dinamicamente ao acoplar ou desacoplar."""
-      if floating:
-         # Quando desacoplado, libera totalmente
-         self.setMinimumSize(0, 0)
-         self.setMaximumSize(QtCore.QSize(524287, 524287))
-         self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
-      else:
-         # Quando acoplado, força o reset do tamanho mínimo para permitir redução
-         self.setMinimumSize(0, 0)
-         if hasattr(self, 'widget') and self.widget():
-            self.widget().setMinimumSize(0, 0)
-
    def hideEvent(self, e):
       self.showCmdSuggestWindow(False)
       
@@ -337,7 +339,23 @@ class QadTextWindow(QDockWidget, Ui_QadTextWindow):
    def showEvent(self, e):
       QDockWidget.showEvent(self, e)
       if hasattr(self, 'edit') and self.edit is not None:
-         self.refreshColors()
+          self.refreshColors()
+      
+      # MODIFICAÇÃO: Força a atualização do tamanho mínimo sempre que a janela é exibida
+      self.setMinimumSize(0, 0)
+      if hasattr(self, 'widget') and self.widget():
+          self.widget().setMinimumSize(0, 0)
+          self.widget().setMaximumSize(QtCore.QSize(16777215, 16777215))
+          self.widget().setMinimumWidth(0)
+          self.widget().setMaximumWidth(16777215)
+      
+      # MODIFICAÇÃO: Força a altura da linha de comando a ser fixa
+      if hasattr(self, 'edit') and self.edit is not None:
+          self.edit.setFixedHeight(self.edit.getOptimalHeight())
+      
+      QApplication.processEvents()
+      self.resizeEdits()
+      self.updateGeometry()
          
    def showMsg(self, msg, displayPromptAfterMsg = False, append = True):
       if hasattr(self, 'edit') and self.edit is not None:
@@ -353,6 +371,7 @@ class QadTextWindow(QDockWidget, Ui_QadTextWindow):
          self.edit.showErr(err)
          
    def showMsgOnChronologyEdit(self, msg):
+      """Exibe mensagem no histórico."""
       if hasattr(self, 'chronologyEdit') and self.chronologyEdit is not None:
          self.chronologyEdit.insertText(msg)
 
@@ -477,27 +496,48 @@ class QadTextWindow(QDockWidget, Ui_QadTextWindow):
       return self.plugin.getCurrenPointFromCommandMapTool()
 
    def resizeEdits(self):
+      """Redimensiona os widgets internos baseado no tamanho disponível."""
       if not hasattr(self, 'edit') or not hasattr(self, 'chronologyEdit') or self.edit is None or self.chronologyEdit is None:
-         return
-            
+          return
+              
       rect = self.rect()
       h = rect.height()
       w = rect.width()
-   
-      editHeight = self.edit.getOptimalHeight()
-      if editHeight > h:
-         editHeight = h
-         
-      chronologyEditHeight = h - editHeight
-      if not self.isFloating():
-         offsetY = 20
-         chronologyEditHeight = chronologyEditHeight - offsetY
-      else:            
-         offsetY = 0
-                  
-      if chronologyEditHeight < 0:
-         chronologyEditHeight = 0
       
+      # MODIFICAÇÃO: Calcula a altura ideal para UMA LINHA de comando
+      editHeight = self.edit.getOptimalHeight()  # Altura de uma única linha
+      minChronologyHeight = 20
+      
+      # Espaço disponível para o histórico
+      if self.isFloating():
+          offsetY = 5  # Margem quando flutuante
+      else:
+          offsetY = 5  # Margem quando anexado
+      
+      availableHeight = h - offsetY
+      
+      # MODIFICAÇÃO: A linha de comando tem altura FIXA (uma linha)
+      # O histórico ocupa TODO o resto do espaço
+      chronologyEditHeight = availableHeight - editHeight
+      
+      # Garante tamanho mínimo para o histórico
+      if chronologyEditHeight < minChronologyHeight:
+          chronologyEditHeight = minChronologyHeight
+          # Se não houver espaço suficiente, reduz a linha de comando
+          if chronologyEditHeight + editHeight > availableHeight:
+              editHeight = max(20, availableHeight - chronologyEditHeight)
+      
+      # Garante que a linha de comando tenha no mínimo sua altura ideal
+      if editHeight < self.edit.getOptimalHeight():
+          editHeight = self.edit.getOptimalHeight()
+          chronologyEditHeight = availableHeight - editHeight
+          if chronologyEditHeight < minChronologyHeight:
+              chronologyEditHeight = minChronologyHeight
+              # Se ainda não houver espaço, reduz a linha de comando
+              if chronologyEditHeight + editHeight > availableHeight:
+                  editHeight = availableHeight - chronologyEditHeight
+      
+      # Posiciona e redimensiona os widgets
       self.chronologyEdit.move(0, offsetY)
       self.chronologyEdit.resize(w, chronologyEditHeight)     
       self.chronologyEdit.ensureCursorVisible()
@@ -507,10 +547,17 @@ class QadTextWindow(QDockWidget, Ui_QadTextWindow):
       self.edit.ensureCursorVisible()
 
    def resizeEvent(self, e):
-      if self:
-         self.resizeEdits()
-         if hasattr(self, 'cmdSuggestWindow') and self.cmdSuggestWindow is not None:
-             self.cmdSuggestWindow.resizeEvent(e)
+      """Manipula o evento de redimensionamento da janela."""
+      QDockWidget.resizeEvent(self, e)
+      
+      # MODIFICAÇÃO: Garante que o widget interno use toda a largura disponível
+      if hasattr(self, 'widget') and self.widget():
+          self.widget().setMinimumWidth(0)
+          self.widget().setMaximumWidth(16777215)
+      
+      self.resizeEdits()
+      if hasattr(self, 'cmdSuggestWindow') and self.cmdSuggestWindow is not None:
+          self.cmdSuggestWindow.resizeEvent(e)
 
         
 # ===============================================================================
@@ -1185,9 +1232,11 @@ class QadEdit(QTextEdit):
       return
       
    def getOptimalHeight(self):
+      """Retorna a altura fixa para UMA LINHA de comando."""
       fm = QFontMetrics(self.currentFont())
       pixelsHeight = fm.height()
-      return pixelsHeight + 8
+      # MODIFICAÇÃO: Retorna a altura exata de uma linha + uma pequena margem
+      return pixelsHeight + 4  # Reduzi a margem para 4 pixels
       
    def onTextChanged(self):
       self.parentWidget().resizeEdits()

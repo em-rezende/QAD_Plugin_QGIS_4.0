@@ -31,7 +31,7 @@ category=Vector
 tags=cad,circle,digitizing,dimensioning,ellipse,polygon,polyline,rectangle,snap,vector
 
 homepage=https://github.com/em-rezende/QAD.github.io
-icon=icons/qad.png
+icon=icons/qad.svg
 # experimental flag
 experimental=False
 
