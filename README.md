@@ -69,15 +69,20 @@ Dimension styles are saved in `.dim` files which are loaded at startup or when a
 
 ## The Interface
 
-### Options Panel
-Configure program settings, including command history, autocomplete, snap settings, and tolerance for curves.
-
-![QAD Options](image/qad-options.png)
-
 ### Toolbars
 Quick access to all drawing, editing, dimensioning, and snapping tools.
 
 ![QAD Toolbars](image/qad-toolbars.png)
+
+### Text Command Window
+QAD's command line interface provides real-time feedback and prompts, similar to traditional CAD software, making the transition smooth for CAD users.
+
+![QAD Text Window](image/qad-textwindow.png)
+
+### Options Panel
+Configure program settings, including command history, autocomplete, snap settings, and tolerance for curves.
+
+![QAD Options](image/qad-options.png)
 
 ### Snap Configuration
 Fine-tune your object snap modes (OSNAP) and dynamic input settings.
@@ -88,6 +93,12 @@ Fine-tune your object snap modes (OSNAP) and dynamic input settings.
 Create, modify, and compare dimension styles.
 
 ![QAD Dim Style](image/qad-dim.png)
+
+### Drawing Sample
+Example of technical drawing with dimensions created using QAD's dimensioning tools, showcasing linear and radial measurements with precise annotations.
+
+![QAD Drawing Sample](image/qad-drawingsample.png)
+
 
 ## Command Customization
 
